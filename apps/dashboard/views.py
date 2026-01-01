@@ -24,6 +24,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 
 from apps.core.dashboard.defs import KpiDef, ChartDef, ChartDataset
+from apps.orgs.decorators import organization_required
 from .forms import DemoQuickActionForm, DemoTableFilterForm
 
 
@@ -31,6 +32,7 @@ def _is_htmx(request: HttpRequest) -> bool:
     return request.headers.get("HX-Request") == "true"
 
 
+@organization_required
 @login_required
 def dashboard(request: HttpRequest) -> HttpResponse:
     # Verificación de acceso post-registro

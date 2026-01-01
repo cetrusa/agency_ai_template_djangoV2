@@ -26,6 +26,7 @@ urlpatterns = [
     path("dashboard/", include(("apps.dashboard.urls", "dashboard"), namespace="dashboard")),
     path("organization/", include("apps.organization_admin.urls")),
     path("users/", include("apps.users_admin.urls")),
+    path("orgs/", include(("apps.orgs.urls", "orgs"), namespace="orgs")),
     path("", include(("apps.dashboard.urls", "dashboard"), namespace="home")),  # Default redirect (namespace distinto para evitar colisión)
 ]
 

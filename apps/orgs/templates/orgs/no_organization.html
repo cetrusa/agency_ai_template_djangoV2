@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Sin organizaciones asignadas{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+      <div class="alert alert-warning shadow-sm" role="alert">
+        <h5 class="alert-heading">No tienes empresas asignadas.</h5>
+        <p class="mb-3">Contacta al administrador para que te asigne a una organización.</p>
+        <a class="btn btn-outline-secondary btn-sm" href="{% url 'accounts:logout' %}">Cerrar sesión</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
