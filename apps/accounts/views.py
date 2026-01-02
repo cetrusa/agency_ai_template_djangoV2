@@ -11,6 +11,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
 from django.core.mail import send_mail
 from django.conf import settings
+from apps.core.models import GlobalConfig
 
 from .forms import UserProfileForm, CustomPasswordChangeForm, UserRegisterForm
 
@@ -132,7 +133,9 @@ def register_view(request: HttpRequest) -> HttpResponse:
             )
             
             # Enviar correo (simulado en consola si no hay SMTP)
-            subject = f"Verifica tu cuenta en {settings.GLOBAL_CONFIG.get('site_name', 'Agency Dashboard')}"
+            config = GlobalConfig.load()
+            site_name = getattr(config, "site_name", "Agency Dashboard")
+            subject = f"Verifica tu cuenta en {site_name}"
             message = f"""Hola {user.first_name},
 
 Gracias por registrarte. Para activar tu cuenta, por favor haz clic en el siguiente enlace:
