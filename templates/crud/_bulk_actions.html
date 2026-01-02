@@ -1,0 +1,56 @@
+{% comment %}
+CRUD UI KIT · _bulk_actions.html
+
+Acciones masivas.
+
+Contrato (backend):
+- crud_urls.bulk: endpoint POST /<entity>/bulk/
+- bulk_actions: lista opcional de tuplas (value,label)
+
+HTMX:
+- POST con IDs seleccionados.
+- En éxito, backend recomienda 204 + HX-Trigger {"crudChanged": true}
+  y opcionalmente crudModalClose si el backend usa modal.
+
+JS (crud.js):
+- Gestiona checkboxes, habilita/deshabilita esta barra, y rellena el input hidden.
+{% endcomment %}
+
+<div class="crud-bulk" data-crud-bulk hidden>
+  <form class="d-flex flex-wrap align-items-center gap-2"
+        method="post"
+        action="{{ crud_urls.bulk }}"
+        hx-post="{{ crud_urls.bulk }}"
+        hx-target="#crud-alerts"
+        hx-swap="innerHTML"
+        hx-indicator="#crud-indicator">
+
+    {% csrf_token %}
+
+    <input type="hidden" name="ids" value="" data-crud-selected-ids />
+
+    <span class="ds-pill ds-pill-info" aria-label="Seleccionados">
+      <span><span data-crud-selected-count>0</span> seleccionados</span>
+    </span>
+
+    <select class="form-select form-select-sm crud-bulk-select" name="action" aria-label="Acción masiva">
+      {% if bulk_actions %}
+        {% for val,label in bulk_actions %}
+          <option value="{{ val }}">{{ label }}</option>
+        {% endfor %}
+      {% else %}
+        <option value="activate">Activar</option>
+        <option value="deactivate">Desactivar</option>
+        <option value="delete">Eliminar</option>
+      {% endif %}
+    </select>
+
+    <button class="btn btn-outline-primary btn-sm" type="submit">
+      Aplicar
+    </button>
+
+    <button class="btn btn-link btn-sm" type="button" data-crud-clear-selection>
+      Limpiar
+    </button>
+  </form>
+</div>

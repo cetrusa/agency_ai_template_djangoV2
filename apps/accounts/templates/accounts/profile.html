@@ -1,0 +1,103 @@
+{% load static %}
+
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+  <div>
+    <h4 class="fw-bold mb-1">Mi Perfil</h4>
+    <p class="text-muted mb-0">Información personal y datos de cuenta.</p>
+  </div>
+  <div class="btn-group" role="group">
+    <a href="{% url 'accounts:profile_edit' %}" 
+       class="btn btn-primary"
+       hx-get="{% url 'accounts:profile_edit' %}"
+       hx-target="#app-content"
+       hx-swap="innerHTML"
+       hx-push-url="true">
+      <i class="bi bi-pencil-square me-1"></i> Editar Perfil
+    </a>
+    <a href="{% url 'accounts:password_change' %}" 
+       class="btn btn-secondary"
+       hx-get="{% url 'accounts:password_change' %}"
+       hx-target="#app-content"
+       hx-swap="innerHTML"
+       hx-push-url="true">
+      <i class="bi bi-key me-1"></i> Cambiar Contraseña
+    </a>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Información de Cuenta -->
+  <div class="col-12 col-md-6">
+    <div class="card h-100">
+      <div class="card-header">
+        <h5 class="card-title mb-0">Datos Personales</h5>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <label class="small text-uppercase fw-semibold text-muted">Usuario</label>
+          <div class="fw-medium">{{ user.username }}</div>
+        </div>
+        
+        <div class="row">
+          <div class="col-6 mb-3">
+            <label class="small text-uppercase fw-semibold text-muted">Nombre</label>
+            <div class="fw-medium">{{ user.first_name|default:"Sin registrar" }}</div>
+          </div>
+          <div class="col-6 mb-3">
+            <label class="small text-uppercase fw-semibold text-muted">Apellido</label>
+            <div class="fw-medium">{{ user.last_name|default:"Sin registrar" }}</div>
+          </div>
+        </div>
+        
+        <div class="mb-3">
+          <label class="small text-uppercase fw-semibold text-muted">Email</label>
+          <div class="fw-medium">{{ user.email|default:"Sin registrar" }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Información de Seguridad -->
+  <div class="col-12 col-md-6">
+    <div class="card h-100">
+      <div class="card-header">
+        <h5 class="card-title mb-0">Seguridad</h5>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <label class="small text-uppercase fw-semibold text-muted">Estado de Cuenta</label>
+          <div>
+            {% if user.is_active %}
+              <span class="badge bg-success">Activa</span>
+            {% else %}
+              <span class="badge bg-danger">Inactiva</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="small text-uppercase fw-semibold text-muted">Tipo de Usuario</label>
+          <div>
+            {% if user.is_superuser %}
+              <span class="badge bg-danger">Administrador</span>
+            {% elif user.is_staff %}
+              <span class="badge bg-warning text-dark">Personal</span>
+            {% else %}
+              <span class="badge bg-info">Usuario</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="small text-uppercase fw-semibold text-muted">Fecha de Alta</label>
+          <div class="fw-medium">{{ user.date_joined|date:"d/m/Y H:i" }}</div>
+        </div>
+
+        <div class="mb-0">
+          <label class="small text-uppercase fw-semibold text-muted">Último Acceso</label>
+          <div class="fw-medium">{{ user.last_login|date:"d/m/Y H:i"|default:"Nunca" }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

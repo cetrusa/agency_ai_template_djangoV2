@@ -1,0 +1,55 @@
+{% comment %}
+CRUD UI KIT · _pagination.html
+
+Paginación server-side (HTMX).
+
+Contrato (backend):
+- page_obj: Django Page
+- crud_urls: dict con list, table
+- qs: string URL-encoded con filtros actuales SIN page (opcional, recomendado)
+
+HTMX:
+- hx-get refresca #crud-table
+- hx-push-url mantiene querystring
+{% endcomment %}
+
+{% if page_obj and page_obj.paginator.num_pages > 1 %}
+  <nav aria-label="Paginación">
+    <ul class="pagination pagination-sm mb-0">
+      {# Prev #}
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link"
+             href="{{ crud_urls.list }}?page={{ page_obj.previous_page_number }}{% if qs %}&{{ qs }}{% endif %}"
+             hx-get="{{ crud_urls.table }}?page={{ page_obj.previous_page_number }}{% if qs %}&{{ qs }}{% endif %}"
+             hx-target="#crud-table"
+             hx-swap="innerHTML"
+             hx-push-url="true"
+             hx-indicator="#crud-indicator"
+             aria-label="Página anterior">Anterior</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+      {% endif %}
+
+      {# Current #}
+      <li class="page-item disabled d-none d-sm-inline"><span class="page-link">{{ page_obj.number }}</span></li>
+
+      {# Next #}
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link"
+             href="{{ crud_urls.list }}?page={{ page_obj.next_page_number }}{% if qs %}&{{ qs }}{% endif %}"
+             hx-get="{{ crud_urls.table }}?page={{ page_obj.next_page_number }}{% if qs %}&{{ qs }}{% endif %}"
+             hx-target="#crud-table"
+             hx-swap="innerHTML"
+             hx-push-url="true"
+             hx-indicator="#crud-indicator"
+             aria-label="Página siguiente">Siguiente</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+      {% endif %}
+    </ul>
+  </nav>
+{% endif %}

@@ -1,0 +1,22 @@
+{% comment %}
+Modal System · Error state
+
+Context:
+- error_title: str
+- error_message: str
+- error_detail: str (opcional)
+{% endcomment %}
+
+<div class="ds-modal-state" role="alert" aria-live="assertive">
+  <div class="alert alert-danger" role="alert">
+    <div class="ds-title mb-1">{{ error_title|default:'Ocurrió un error' }}</div>
+    <div>{{ error_message|default:'No se pudo cargar el contenido del modal.' }}</div>
+    {% if error_detail %}
+      <div class="ds-muted small mt-2">{{ error_detail }}</div>
+    {% endif %}
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button type="button" class="btn btn-outline-secondary btn-sm" data-action="close-modal">Cerrar</button>
+  </div>
+</div>

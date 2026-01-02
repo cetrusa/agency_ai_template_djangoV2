@@ -1,0 +1,57 @@
+{% comment %}
+Modal System · modal_confirm.html
+
+Modal para confirmaciones.
+
+Context esperado:
+- modal_title: str (default: "Confirmar")
+- modal_size: sm|md|lg|xl (default: sm)
+- confirm_action: url POST
+- confirm_label, cancel_label
+- confirm_variant: primary|danger (default: danger)
+- confirm_message: str (texto principal)
+- confirm_detail: str (opcional)
+
+HTMX:
+- hx-post a confirm_action
+- En éxito: 204 + HX-Trigger {"crudChanged": true, "modalClose": true}
+{% endcomment %}
+
+{% extends 'partials/modals/modal_base.html' %}
+
+{% block modal_body %}
+  {% if modal_state == 'loading' %}
+    {% include 'partials/modals/_modal_loading.html' %}
+  {% elif modal_state == 'error' %}
+    {% include 'partials/modals/_modal_error.html' %}
+  {% else %}
+    <div class="alert alert-warning" role="alert">
+      {{ confirm_message|default:'Esta acción no se puede deshacer.' }}
+    </div>
+
+    {% if confirm_detail %}
+      <div class="ds-muted">{{ confirm_detail }}</div>
+    {% endif %}
+  {% endif %}
+{% endblock %}
+
+{% block modal_footer %}
+  <div class="d-flex justify-content-end gap-2">
+    <button type="button" class="btn btn-outline-secondary btn-sm" data-action="close-modal">
+      {{ cancel_label|default:'Cancelar' }}
+    </button>
+
+    <form method="post"
+          action="{{ confirm_action }}"
+          hx-post="{{ confirm_action }}"
+          hx-target="#modal-host"
+          hx-swap="innerHTML"
+          hx-indicator="#modal-indicator">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-{{ confirm_variant|default:'danger' }} btn-sm">
+        <i class="bi bi-check2"></i>
+        {{ confirm_label|default:'Confirmar' }}
+      </button>
+    </form>
+  </div>
+{% endblock %}

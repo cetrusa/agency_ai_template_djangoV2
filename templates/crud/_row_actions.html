@@ -1,0 +1,54 @@
+{% comment %}
+CRUD UI KIT · _row_actions.html
+
+Acciones por fila.
+
+Contrato (backend):
+- item.id
+- crud_urls:
+  - (opcional) detail_template: url template o endpoint detail
+  - edit_template: url base o template para editar
+  - delete_template: url base o template para confirmar delete
+
+Como esto es 100% reutilizable, el backend debe construir URLs por fila.
+Opciones recomendadas:
+A) Pasar directamente en cada item:
+  - item.urls.edit
+  - item.urls.delete
+  - item.urls.detail (opcional)
+B) Pasar helpers:
+  - crud_url_edit: callable en vista que genera url
+
+Para mantener los templates simples, este partial asume la opción A:
+- item.urls.edit
+- item.urls.delete
+- item.urls.detail (opcional)
+{% endcomment %}
+
+<div class="btn-group" role="group" aria-label="Acciones">
+  {% if item.urls.detail %}
+    <a class="btn btn-outline-secondary btn-sm" href="{{ item.urls.detail }}" aria-label="Ver">
+      <i class="bi bi-eye"></i>
+    </a>
+  {% endif %}
+
+  <button class="btn btn-outline-secondary btn-sm"
+          type="button"
+          hx-get="{{ item.urls.edit }}"
+      hx-target="#modal-host"
+      hx-swap="innerHTML"
+          hx-indicator="#crud-indicator"
+          aria-label="Editar">
+    <i class="bi bi-pencil"></i>
+  </button>
+
+  <button class="btn btn-outline-danger btn-sm"
+          type="button"
+          hx-get="{{ item.urls.delete }}"
+      hx-target="#modal-host"
+      hx-swap="innerHTML"
+          hx-indicator="#crud-indicator"
+          aria-label="Eliminar">
+    <i class="bi bi-trash"></i>
+  </button>
+</div>

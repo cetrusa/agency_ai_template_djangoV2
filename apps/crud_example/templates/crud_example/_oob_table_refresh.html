@@ -1,0 +1,11 @@
+{% comment %}
+Respuesta para POST exitosos en modales:
+- Actualiza la tabla via OOB swap preservando filtros/sort/page
+- El cierre del modal se hace vía header HX-Trigger: {"modalClose": true}
+{% endcomment %}
+
+<section id="crud-table" hx-swap-oob="innerHTML">
+  {% include 'crud/_table.html' %}
+</section>
+
+<div></div>

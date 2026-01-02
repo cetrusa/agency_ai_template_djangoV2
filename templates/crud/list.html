@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% comment %}
+CRUD UI KIT · list.html
+
+Pantalla principal (full page SSR) que:
+- Renderiza toolbar + filtros + alerts + contenedor de tabla.
+- La tabla se carga/actualiza por HTMX (sin recargar el layout).
+
+Contrato (backend):
+- crud_urls: dict con urls absolutas o relativas:
+  - list, table, create, bulk
+  - edit_template: patrón o builder en backend (ver _row_actions.html)
+- page_title: str
+- entity_label: str (singular) y entity_label_plural: str (plural)
+- current_filters: dict {q, status, from, to, sort, dir, page}
+- total_count: int
+
+Notas HTMX:
+- #crud-table hace hx-get a crud_urls.table y se refresca al disparar el evento "crudChanged".
+- Los filtros usan hx-get y hx-push-url para mantener querystring compartible.
+{% endcomment %}
+
+{% block title %}{{ page_title|default:"Listado" }}{% endblock %}
+
+{% block head %}
+  <link href="{% static 'css/crud.css' %}" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+  <div class="crud-page">
+    {# Alerts (reutilizable). Se puede actualizar OOB tras acciones. #}
+    <div id="crud-alerts">
+      {% include 'crud/_alerts.html' %}
+    </div>
+
+    <div class="crud-toolbar d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+      <div>
+        <div class="ds-title h4 mb-1">{{ page_title|default:entity_label_plural|default:"Listado" }}</div>
+        <div class="ds-muted">
+          {{ entity_label_plural|default:"Registros" }}
+          {% if total_count is not None %}
+            <span class="badge bg-label-primary ms-1">{{ total_count }} registros</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="d-flex gap-2">
+        {# Placeholder: Export (sin implementación en Step 1). #}
+        <div class="dropdown">
+          <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            <i class="bi bi-download"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{ crud_urls.export_csv }}">CSV</a></li>
+            <li><a class="dropdown-item" href="{{ crud_urls.export_xlsx }}">Excel</a></li>
+            <li><a class="dropdown-item" href="{{ crud_urls.export_pdf }}">PDF</a></li>
+          </ul>
+        </div>
+
+        {% if crud_urls.create %}
+        {# Botón "Nuevo" abre modal y trae contenido por HTMX. #}
+        <button class="btn btn-primary"
+                hx-get="{{ crud_urls.create }}"
+                hx-target="#modal-host"
+                hx-swap="innerHTML">
+          <i class="bi bi-plus-lg me-1"></i>
+          Nuevo {{ entity_label|default:"Registro" }}
+        </button>
+        {% endif %}
+      </div>
+    </div>
+
+    {# Filtros (server-driven). #}
+    <div class="crud-filters mb-3">
+      {% include 'crud/_filters.html' %}
+    </div>
+
+    {# Loading indicator global para requests de tabla/modales. #}
+    <div id="crud-indicator" class="htmx-indicator py-3 text-center text-muted">
+      <div class="spinner-border spinner-border-sm" role="status" aria-label="Cargando"></div>
+      <span class="ms-2">Cargando…</span>
+    </div>
+
+    {% comment %}
+      Contenedor de tabla:
+      - load: primera carga
+      - crudChanged: refresco tras create/edit/delete/bulk (disparado por backend via HX-Trigger)
+    {% endcomment %}
+    <section id="crud-table"
+             hx-get="{{ crud_urls.table }}"
+             hx-trigger="load, crudChanged from:body"
+             hx-target="this"
+             hx-swap="innerHTML"
+             hx-indicator="#crud-indicator">
+      {# Initial state: skeleton o spinner #}
+      <div class="p-5 text-center text-muted">
+        <div class="spinner-border text-primary" role="status"></div>
+      </div>
+    </section>
+  </div>
+{% endblock %}

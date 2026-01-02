@@ -1,0 +1,42 @@
+/*
+Base styles
+
+- Pequeñas decisiones globales.
+- No reemplaza Bootstrap; lo complementa.
+*/
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--ds-font-sans);
+  background: var(--ds-bg);
+  color: var(--ds-text);
+}
+
+a {
+  text-decoration: none;
+}
+
+.ds-surface {
+  background: var(--ds-bg-surface);
+  border: 0;
+  border-radius: var(--ds-radius-card);
+  box-shadow: var(--ds-shadow-card);
+}
+
+.ds-muted {
+  color: var(--ds-text-muted);
+}
+
+.ds-title {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Mejor foco (accesible) sin romper Bootstrap */
+:focus-visible {
+  outline: 3px solid rgba(59, 130, 246, 0.35);
+  outline-offset: 2px;
+}

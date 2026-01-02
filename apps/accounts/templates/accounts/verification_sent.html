@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Verifica tu Email - {{ GLOBAL_CONFIG.site_name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center" style="background-color: var(--ds-bg-body);">
+  <div class="card border-0 shadow-sm text-center" style="max-width: 450px; width: 100%; border-radius: var(--ds-radius-card);">
+    <div class="card-body p-5">
+      <div class="mb-4 text-primary">
+        <i class="bi bi-envelope-check-fill" style="font-size: 4rem;"></i>
+      </div>
+      <h4 class="mb-3 fw-bold text-dark">Verifica tu correo electrónico</h4>
+      <p class="text-muted mb-4">
+        Hemos enviado un enlace de verificación a <strong>{{ email }}</strong>.
+        Por favor, revisa tu bandeja de entrada (y spam) para activar tu cuenta.
+      </p>
+      <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary">
+        Volver al Login
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

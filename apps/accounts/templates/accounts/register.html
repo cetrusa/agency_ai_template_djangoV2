@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Crear Cuenta - {{ GLOBAL_CONFIG.site_name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center" style="background-color: var(--ds-bg-body);">
+  <div class="card border-0 shadow-sm" style="max-width: 500px; width: 100%; border-radius: var(--ds-radius-card);">
+    <div class="card-body p-4 p-sm-5">
+      <div class="text-center mb-4">
+        {% if GLOBAL_CONFIG.logo %}
+          <img src="{{ GLOBAL_CONFIG.logo.url }}" alt="{{ GLOBAL_CONFIG.site_name }}" class="img-fluid mb-3" style="max-height: 50px;">
+        {% else %}
+          <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 48px; height: 48px; background-color: rgba(105, 108, 255, 0.1); color: var(--ds-primary);">
+            <i class="bi bi-person-plus-fill fs-4"></i>
+          </div>
+        {% endif %}
+        <h4 class="mb-2 fw-bold text-dark">Crear una cuenta</h4>
+        <p class="text-muted mb-0">Únete a {{ GLOBAL_CONFIG.site_name | default:"Agency Dashboard" }}</p>
+      </div>
+
+      <form method="post" class="mb-3">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+          <label for="{{ form.username.id_for_label }}" class="form-label small text-uppercase fw-bold text-muted">Usuario</label>
+          {{ form.username }}
+          {% if form.username.errors %}
+            <div class="invalid-feedback d-block">{{ form.username.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <div class="mb-3">
+          <label for="{{ form.email.id_for_label }}" class="form-label small text-uppercase fw-bold text-muted">Email</label>
+          {{ form.email }}
+          {% if form.email.errors %}
+            <div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="{{ form.first_name.id_for_label }}" class="form-label small text-uppercase fw-bold text-muted">Nombre</label>
+            {{ form.first_name }}
+          </div>
+          <div class="col-md-6">
+            <label for="{{ form.last_name.id_for_label }}" class="form-label small text-uppercase fw-bold text-muted">Apellido</label>
+            {{ form.last_name }}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="{{ form.password.id_for_label }}" class="form-label small text-uppercase fw-bold text-muted">Contraseña</label>
+          {{ form.password }}
+          {% if form.password.errors %}
+            <div class="invalid-feedback d-block">{{ form.password.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <div class="mb-3">
+          <label for="{{ form.password_confirm.id_for_label }}" class="form-label small text-uppercase fw-bold text-muted">Confirmar Contraseña</label>
+          {{ form.password_confirm }}
+          {% if form.password_confirm.errors %}
+            <div class="invalid-feedback d-block">{{ form.password_confirm.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <div class="mb-3">
+          <button class="btn btn-primary d-grid w-100" type="submit">
+            Registrarse
+          </button>
+        </div>
+      </form>
+
+      <p class="text-center">
+        <span>¿Ya tienes una cuenta?</span>
+        <a href="{% url 'accounts:login' %}" class="text-primary text-decoration-none fw-medium">
+          Iniciar Sesión
+        </a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

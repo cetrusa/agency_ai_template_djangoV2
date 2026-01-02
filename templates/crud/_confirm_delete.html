@@ -1,0 +1,51 @@
+{% comment %}
+CRUD UI KIT · _confirm_delete.html
+
+Confirmación de delete (modal).
+
+Contrato (backend):
+- entity_label: str
+- object_label: str (texto identificador del registro)
+- delete_action: url POST
+
+HTMX:
+- POST a delete_action.
+- En éxito, backend recomienda responder 204 + HX-Trigger:
+  - {"crudChanged": true, "crudModalClose": true}
+- Para mostrar mensaje, backend puede devolver crud/_alerts.html con hx-swap-oob.
+{% endcomment %}
+
+<div class="modal-content" id="crudConfirmDeleteContent">
+  <div class="modal-header">
+    <h5 class="modal-title ds-title">Confirmar eliminación</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+  </div>
+
+  <div class="modal-body">
+    <div class="alert alert-warning" role="alert">
+      Esta acción no se puede deshacer.
+    </div>
+
+    <p class="mb-0">
+      ¿Eliminar <strong>{{ entity_label|default:"registro" }}</strong>
+      <span class="ds-muted">{{ object_label|default:"" }}</span>?
+    </p>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+
+    <form method="post"
+          action="{{ delete_action }}"
+          hx-post="{{ delete_action }}"
+          hx-target="#appModal .modal-content"
+          hx-swap="outerHTML"
+          hx-indicator="#crud-indicator">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger btn-sm">
+        <i class="bi bi-trash"></i>
+        Eliminar
+      </button>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,38 @@
+{% comment %}
+CRUD UI KIT · _modal_form.html
+
+Modal reutilizable (Bootstrap) para Create/Edit.
+
+Uso recomendado:
+- El botón "Nuevo" o "Editar" hace hx-get al endpoint create/edit
+  y targetea: "#appModal .modal-content" (swap outerHTML)
+
+Contrato (backend):
+- modal_title: str
+- form_action: url POST (create o edit)
+- form_method: "post" (default)
+- submit_label: str (default: "Guardar")
+- cancel_label: str (default: "Cancelar")
+- entity_label: str
+- crud_urls: (opcional)
+- form: Django form (para incluir crud/_form.html)
+
+HTMX:
+- El <form> hace hx-post a form_action y se reemplaza el modal content.
+- En éxito, backend recomienda responder 204 + headers:
+  - HX-Trigger: {"crudChanged": true, "crudModalClose": true}
+  - (opcional) además devolver alerts OOB en otra respuesta.
+{% endcomment %}
+
+<div class="modal-content" id="crudModalContent">
+  <div class="modal-header">
+    <h5 class="modal-title ds-title" id="crudModalTitle">
+      {{ modal_title|default:"Formulario" }}
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+  </div>
+
+  <div class="modal-body">
+    {% include 'crud/_form.html' %}
+  </div>
+</div>

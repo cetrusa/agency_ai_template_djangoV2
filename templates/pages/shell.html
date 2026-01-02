@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard · Shell{% endblock %}
+
+{% block content %}
+  {% comment %}
+    Shell server-driven:
+    - Renderiza layout completo
+    - Carga el primer módulo por HTMX
+  {% endcomment %}
+  <div id="shell-root"
+       hx-get="{% url 'dashboard:dashboard' %}"
+       hx-trigger="load"
+       hx-target="#shell-root"
+       hx-swap="innerHTML">
+    <div class="ds-card">
+      <div class="ds-card-body">
+        <div class="ds-skeleton ds-h-18 ds-w-220"></div>
+        <div class="ds-skeleton ds-h-160 mt-3"></div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

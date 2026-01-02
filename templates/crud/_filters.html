@@ -1,0 +1,107 @@
+{% comment %}
+CRUD UI KIT · _filters.html
+
+Barra de filtros server-driven.
+
+HTMX:
+- hx-get a crud_urls.table
+- hx-target = #crud-table
+- hx-push-url=true para mantener querystring (compartible)
+- hx-indicator = #crud-indicator para loading state
+
+Contrato (backend):
+- current_filters: dict con valores actuales
+  - q, status, from, to, sort, dir, page
+- status_options: lista opcional de tuplas (value,label). Si no se provee, usa defaults.
+- crud_urls.table
+
+Nota:
+- Este form NO hace submit tradicional; HTMX refresca la tabla.
+{% endcomment %}
+
+<form class="ds-card crud-filters-card"
+      hx-get="{{ crud_urls.table }}"
+      hx-target="#crud-table"
+      hx-swap="innerHTML"
+      hx-push-url="true"
+      hx-indicator="#crud-indicator"
+      hx-trigger="submit, change delay:250ms">
+
+  <div class="ds-card-body">
+    <div class="row g-2 align-items-end">
+      <div class="col-12 col-lg-4">
+        <label class="form-label mb-1" for="crud-q">Buscar</label>
+        <input id="crud-q"
+               class="form-control"
+               type="search"
+               name="q"
+               value="{{ current_filters.q|default:'' }}"
+               placeholder="Buscar…"
+               aria-label="Buscar" />
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-3">
+        <label class="form-label mb-1" for="crud-status">Estado</label>
+        <select id="crud-status" class="form-select" name="status" aria-label="Filtrar por estado">
+          {% if status_options %}
+            {% for val,label in status_options %}
+              <option value="{{ val }}" {% if current_filters.status == val %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          {% else %}
+            <option value="all" {% if current_filters.status == 'all' or not current_filters.status %}selected{% endif %}>Todos</option>
+            <option value="active" {% if current_filters.status == 'active' %}selected{% endif %}>Activo</option>
+            <option value="inactive" {% if current_filters.status == 'inactive' %}selected{% endif %}>Inactivo</option>
+          {% endif %}
+        </select>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-2">
+        <label class="form-label mb-1" for="crud-from">Desde</label>
+        <input id="crud-from"
+               class="form-control"
+               type="date"
+               name="from"
+               value="{{ current_filters.from|default:'' }}"
+               aria-label="Fecha desde" />
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-2">
+        <label class="form-label mb-1" for="crud-to">Hasta</label>
+        <input id="crud-to"
+               class="form-control"
+               type="date"
+               name="to"
+               value="{{ current_filters.to|default:'' }}"
+               aria-label="Fecha hasta" />
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-1 d-grid">
+        <button class="btn btn-outline-secondary" type="submit" aria-label="Aplicar filtros">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+
+      {# Hidden state para mantener ordenamiento entre cambios de filtro. #}
+      <input type="hidden" name="sort" value="{{ current_filters.sort|default:'' }}" />
+      <input type="hidden" name="dir" value="{{ current_filters.dir|default:'' }}" />
+      <input type="hidden" name="page" value="1" />
+    </div>
+
+    <div class="crud-filters-meta d-flex flex-wrap gap-2 justify-content-between mt-3">
+      <div class="ds-muted small">
+        Tip: Los filtros mantienen la URL (querystring).
+      </div>
+
+      <a class="btn btn-link btn-sm p-0"
+         href="{{ crud_urls.list }}"
+         hx-get="{{ crud_urls.table }}"
+         hx-target="#crud-table"
+         hx-swap="innerHTML"
+         hx-push-url="true"
+         hx-indicator="#crud-indicator"
+         aria-label="Limpiar filtros">
+        Limpiar filtros
+      </a>
+    </div>
+  </div>
+</form>

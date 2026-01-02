@@ -1,0 +1,109 @@
+{% comment %}
+Tablas (con filtros + paginación)
+
+Patrón HTMX:
+- El contenedor completo (#table-card) se reemplaza via hx-swap="outerHTML".
+- El filtro usa hx-get para refrescar la tabla sin recarga.
+{% endcomment %}
+
+<div id="table-card" class="ds-card">
+  <div class="ds-card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <div class="ds-title">Servicios</div>
+      <div class="ds-muted small">Filtro + paginación (HTMX).</div>
+    </div>
+
+    <form class="d-flex flex-wrap gap-2"
+          hx-get="{% url 'dashboard:table' %}"
+          hx-target="#table-card"
+          hx-swap="outerHTML"
+          hx-push-url="true"
+          hx-trigger="submit, change delay:250ms">
+          <div class="ds-minw-220">
+        {{ filter_form.q }}
+      </div>
+          <div class="ds-minw-160">
+        {{ filter_form.status }}
+      </div>
+      <button class="btn btn-outline-secondary btn-sm" type="submit">
+        <i class="bi bi-search"></i>
+      </button>
+    </form>
+  </div>
+
+  <div class="ds-card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0 ds-table">
+        <thead>
+          <tr>
+            <th class="px-3 py-3">Nombre</th>
+            <th class="py-3">Estado</th>
+            <th class="py-3">Actualizado</th>
+            <th class="py-3">Owner</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in page.object_list %}
+            <tr>
+              <td class="px-3 py-3">
+                <div class="ds-title">{{ r.name }}</div>
+                <div class="ds-muted small">Demo row</div>
+              </td>
+              <td class="py-3">
+                {% if r.status == 'ok' %}
+                  <span class="ds-pill ds-pill-success">OK</span>
+                {% elif r.status == 'warn' %}
+                  <span class="ds-pill ds-pill-warning">Alerta</span>
+                {% else %}
+                  <span class="ds-pill ds-pill-danger">Caído</span>
+                {% endif %}
+              </td>
+              <td class="py-3 ds-muted">{{ r.updated }}</td>
+              <td class="py-3 ds-muted">{{ r.owner }}</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td class="px-3 py-4 ds-muted" colspan="4">Sin resultados.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="px-3 py-3 d-flex align-items-center justify-content-between">
+    <div class="ds-muted small">
+      Página {{ page.number }} de {{ page.paginator.num_pages }}
+    </div>
+
+    <nav aria-label="Paginación">
+      <ul class="pagination pagination-sm mb-0">
+        {% if page.has_previous %}
+          <li class="page-item">
+            <a class="page-link"
+               href="?page={{ page.previous_page_number }}&q={{ filter_form.cleaned_data.q|default:'' }}&status={{ filter_form.cleaned_data.status|default:'' }}"
+               hx-get="{% url 'dashboard:table' %}?page={{ page.previous_page_number }}&q={{ filter_form.cleaned_data.q|default:'' }}&status={{ filter_form.cleaned_data.status|default:'' }}"
+               hx-target="#table-card"
+               hx-swap="outerHTML"
+               hx-push-url="true">Anterior</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+        {% endif %}
+
+        {% if page.has_next %}
+          <li class="page-item">
+            <a class="page-link"
+               href="?page={{ page.next_page_number }}&q={{ filter_form.cleaned_data.q|default:'' }}&status={{ filter_form.cleaned_data.status|default:'' }}"
+               hx-get="{% url 'dashboard:table' %}?page={{ page.next_page_number }}&q={{ filter_form.cleaned_data.q|default:'' }}&status={{ filter_form.cleaned_data.status|default:'' }}"
+               hx-target="#table-card"
+               hx-swap="outerHTML"
+               hx-push-url="true">Siguiente</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+</div>

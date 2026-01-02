@@ -1,0 +1,101 @@
+/*
+CRUD UI KIT styles
+
+Reglas:
+- Sin colores hardcodeados: usar tokens (tokens.css) + Bootstrap.
+- Complementa a Bootstrap, no lo reemplaza.
+- Reutilizable por entidad.
+*/
+
+.crud-page {
+  display: block;
+}
+
+.crud-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--ds-border);
+  background: var(--ds-surface);
+  color: var(--ds-text-muted);
+  box-shadow: var(--ds-shadow-sm);
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 1080;
+}
+
+/* HTMX indicator: visible solo durante requests */
+.htmx-indicator {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease-in-out;
+}
+
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+  opacity: 1;
+}
+
+.crud-filters-card .form-label {
+  color: var(--ds-text-muted);
+  font-size: 0.85rem;
+}
+
+.crud-filters-meta a {
+  color: var(--ds-brand-700);
+}
+
+.crud-table-card .ds-card-header {
+  background: var(--ds-surface);
+}
+
+.crud-table-scroll {
+  scroll-behavior: smooth;
+}
+
+.crud-col-check {
+  width: 44px;
+}
+
+.crud-col-actions {
+  width: 120px;
+}
+
+.crud-sort-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ds-gray-700);
+}
+
+.crud-sort-link:hover {
+  color: var(--ds-brand-700);
+}
+
+.crud-empty {
+  padding: 10px 0;
+}
+
+/* Bulk actions */
+.crud-bulk {
+  display: flex;
+  align-items: center;
+}
+
+.crud-bulk-select {
+  min-width: 180px;
+}
+
+@media (max-width: 576px) {
+  .crud-col-actions {
+    width: 88px;
+  }
+
+  .crud-indicator {
+    right: 12px;
+    bottom: 12px;
+  }
+}

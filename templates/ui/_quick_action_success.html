@@ -1,0 +1,12 @@
+<div class="alert alert-success mb-3" role="alert">
+  Acción creada (demo): <strong>{{ data.title }}</strong> · Prioridad: <strong>{{ data.priority }}</strong>
+</div>
+
+<div class="d-flex justify-content-end">
+  <button class="btn btn-outline-primary btn-sm"
+          hx-get="{% url 'dashboard:quick_action' %}"
+          hx-target="#quick-action"
+          hx-swap="innerHTML">
+    Crear otra
+  </button>
+</div>

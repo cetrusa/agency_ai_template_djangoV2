@@ -1,0 +1,137 @@
+/*
+Modal System styles
+
+- No Bootstrap Modal (evita dependencia de data-API y duplicación).
+- Usa tokens + Bootstrap utilities.
+*/
+
+.ds-modal-host {
+  position: relative;
+  z-index: var(--ds-z-modal, 1080);
+}
+
+.ds-modal-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--ds-border);
+  background: var(--ds-surface);
+  color: var(--ds-text-muted);
+  box-shadow: var(--ds-shadow-sm);
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: calc(var(--ds-z-modal, 1080) + 10);
+}
+
+.htmx-indicator {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease-in-out;
+}
+
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+  opacity: 1;
+}
+
+/* Backdrop */
+.ds-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 24, 40, 0.55);
+  backdrop-filter: blur(2px);
+  z-index: calc(var(--ds-z-modal, 1080) + 1);
+  opacity: 0;
+  animation: ds-modal-fade-in 160ms ease-out forwards;
+}
+
+/* Panel wrapper */
+.ds-modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: calc(var(--ds-z-modal, 1080) + 2);
+  padding: 18px;
+}
+
+.ds-modal__panel {
+  width: 100%;
+  max-height: calc(100vh - 36px);
+  overflow: auto;
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius-lg);
+  box-shadow: var(--ds-shadow-md);
+  transform: translateY(6px);
+  opacity: 0;
+  animation: ds-modal-pop-in 180ms ease-out forwards;
+}
+
+.ds-modal--sm .ds-modal__panel { max-width: 420px; }
+.ds-modal--md .ds-modal__panel { max-width: 640px; }
+.ds-modal--lg .ds-modal__panel { max-width: 920px; }
+.ds-modal--xl .ds-modal__panel { max-width: 1140px; }
+
+.ds-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--ds-border);
+}
+
+.ds-modal__header.is-sticky {
+  position: sticky;
+  top: 0;
+  background: var(--ds-surface);
+  z-index: 1;
+}
+
+.ds-modal__title {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.ds-modal__body {
+  padding: 16px;
+}
+
+.ds-modal__footer {
+  padding: 14px 16px;
+  border-top: 1px solid var(--ds-border);
+}
+
+.ds-modal-state {
+  min-height: 120px;
+}
+
+body.ds-modal-open {
+  overflow: hidden;
+}
+
+@keyframes ds-modal-fade-in {
+  to { opacity: 1; }
+}
+
+@keyframes ds-modal-pop-in {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 576px) {
+  .ds-modal {
+    padding: 12px;
+  }
+
+  .ds-modal-indicator {
+    right: 12px;
+    bottom: 12px;
+  }
+}

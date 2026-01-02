@@ -1,0 +1,2 @@
+# Vendor assets live here when pinning versions locally.
+# Por defecto usamos CDN en templates para no añadir tooling.

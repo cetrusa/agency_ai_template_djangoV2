@@ -1,0 +1,33 @@
+{% comment %}
+Modal System · modal_footer_actions.html
+
+Footer estándar reusable.
+
+Context:
+- cancel_label
+- submit_label
+- submit_form_selector: CSS selector del <form> a submittear (HTML5)
+
+Nota:
+- El botón submit usa atributo "form" solo si el form tiene id.
+  Para mantenerlo simple, aquí disparamos submit via HTML (type=submit)
+  cuando el footer está dentro del form, pero en modal_form el footer está fuera.
+
+Solución:
+- El JS del navegador permite submit con requestSubmit().
+- modals.js implementa data-action="submit-modal-form".
+{% endcomment %}
+
+<div class="d-flex justify-content-end gap-2">
+  <button type="button" class="btn btn-outline-secondary btn-sm" data-action="close-modal">
+    {{ cancel_label|default:'Cancelar' }}
+  </button>
+
+  <button type="button"
+          class="btn btn-primary btn-sm"
+          data-action="submit-modal-form"
+          data-form-selector="{{ submit_form_selector|default:'.ds-modal-form' }}">
+    <i class="bi bi-check2"></i>
+    {{ submit_label|default:'Guardar' }}
+  </button>
+</div>

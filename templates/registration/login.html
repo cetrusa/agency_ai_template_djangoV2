@@ -1,0 +1,161 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ingresar • {{ GLOBAL_CONFIG.site_name }}</title>
+
+    {# Fonts: Public Sans (Sneat) #}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+      rel="stylesheet"
+    />
+
+    {# Bootstrap 5 #}
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
+
+    {# Design System #}
+    <link href="{% static 'css/tokens.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/base.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/components.css' %}" rel="stylesheet" />
+
+    <style>
+      :root {
+        --ds-primary: {{ GLOBAL_CONFIG.primary_color }};
+      }
+      body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--ds-body-bg);
+        background-image: radial-gradient(circle at 50% 0%, rgba(105, 108, 255, 0.08) 0%, transparent 40%);
+      }
+      .auth-card {
+        width: 100%;
+        max-width: 400px;
+        border: none;
+        box-shadow: 0 0.375rem 1rem 0 rgba(58, 53, 65, 0.12);
+        border-radius: 0.5rem;
+      }
+      .auth-logo {
+        height: 42px;
+        width: auto;
+        object-fit: contain;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="d-flex justify-content-center">
+        <div class="card auth-card ds-card">
+          <div class="card-body p-4 p-sm-5">
+            <!-- Logo & Header -->
+            <div class="text-center mb-4">
+              <div class="d-flex justify-content-center mb-3">
+                {% if GLOBAL_CONFIG.login_icon %}
+                  <img src="{{ GLOBAL_CONFIG.login_icon.url }}" alt="Logo" class="auth-logo" />
+                {% elif GLOBAL_CONFIG.logo %}
+                  <img src="{{ GLOBAL_CONFIG.logo.url }}" alt="Logo" class="auth-logo" />
+                {% else %}
+                  <div class="d-flex align-items-center justify-content-center bg-primary text-white rounded-circle" style="width: 42px; height: 42px;">
+                    <i class="bi bi-building-fill fs-5"></i>
+                  </div>
+                {% endif %}
+              </div>
+              <h4 class="mb-2 ds-title">Bienvenido a {{ GLOBAL_CONFIG.site_name }}! 👋</h4>
+              <p class="ds-muted small">{{ GLOBAL_CONFIG.welcome_message }}</p>
+            </div>
+
+            <!-- Form -->
+            <form method="post" action="{% url 'login' %}">
+              {% csrf_token %}
+              
+              {% if form.errors %}
+                <div class="alert alert-danger py-2 small mb-3" role="alert">
+                  <i class="bi bi-exclamation-circle me-1"></i>
+                  Credenciales incorrectas.
+                </div>
+              {% endif %}
+
+              <div class="mb-3">
+                <label for="id_username" class="form-label small text-uppercase fw-semibold ds-muted">Usuario</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0"><i class="bi bi-person"></i></span>
+                  <input type="text" name="username" class="form-control border-start-0 ps-0" id="id_username" placeholder="Ingresa tu usuario" autofocus required>
+                </div>
+              </div>
+
+              <div class="mb-3 form-password-toggle">
+                <div class="d-flex justify-content-between">
+                  <label class="form-label small text-uppercase fw-semibold ds-muted" for="id_password">Contraseña</label>
+                </div>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0"><i class="bi bi-key"></i></span>
+                  <input type="password" name="password" class="form-control border-start-0 ps-0" id="id_password" placeholder="············" required>
+                  <span class="input-group-text cursor-pointer" id="toggle-password" style="cursor: pointer;">
+                    <i class="bi bi-eye-slash" id="toggle-icon"></i>
+                  </span>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="remember-me">
+                  <label class="form-check-label small" for="remember-me">
+                    Recordarme
+                  </label>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <button class="btn btn-primary d-grid w-100" type="submit">Ingresar</button>
+              </div>
+            </form>
+
+            <div class="text-center mt-4">
+              <p class="small ds-muted mb-0">
+                &copy; {% now "Y" %} {{ GLOBAL_CONFIG.site_name }}.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const togglePassword = document.querySelector('#toggle-password');
+        const passwordInput = document.querySelector('#id_password');
+        const toggleIcon = document.querySelector('#toggle-icon');
+
+        if (togglePassword && passwordInput && toggleIcon) {
+          togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            if (type === 'text') {
+              toggleIcon.classList.remove('bi-eye-slash');
+              toggleIcon.classList.add('bi-eye');
+            } else {
+              toggleIcon.classList.remove('bi-eye');
+              toggleIcon.classList.add('bi-eye-slash');
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

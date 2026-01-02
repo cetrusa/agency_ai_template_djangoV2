@@ -1,0 +1,35 @@
+{% comment %}
+CRUD UI KIT · _alerts.html
+
+Mensajes reutilizables.
+
+Soporta 2 fuentes:
+1) Django messages framework (variable `messages`)
+2) Alerts explícitos del backend: `alerts` lista de objetos/dicts:
+   - level: success|info|warning|danger
+   - text: str
+
+Recomendación HTMX (post acciones):
+- Devolver este partial con hx-swap-oob="true" para actualizar #crud-alerts
+
+Ejemplo respuesta backend (fragment):
+<div id="crud-alerts" hx-swap-oob="true">...alerts...</div>
+{% endcomment %}
+
+{% if messages or alerts %}
+  <div class="crud-alerts">
+    {% for m in messages %}
+      <div class="alert alert-{{ m.tags|default:'info' }} alert-dismissible fade show" role="alert">
+        {{ m }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+      </div>
+    {% endfor %}
+
+    {% for a in alerts %}
+      <div class="alert alert-{{ a.level|default:'info' }} alert-dismissible fade show" role="alert">
+        {{ a.text }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}

@@ -1,0 +1,172 @@
+{% load static %}
+
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+  <div>
+    <h4 class="fw-bold mb-1">Configuración de Empresa</h4>
+    <p class="text-muted mb-0">Personaliza la identidad y apariencia de tu aplicación.</p>
+  </div>
+  <a href="{% url 'organization_admin:edit' %}" 
+     class="btn btn-primary"
+     hx-get="{% url 'organization_admin:edit' %}"
+     hx-target="#app-content"
+     hx-swap="innerHTML"
+     hx-push-url="true">
+    <i class="bi bi-pencil-square me-1"></i> Editar Configuración
+  </a>
+</div>
+
+<div class="row g-4">
+  <!-- Identidad Visual -->
+  <div class="col-12 col-md-6">
+    <div class="card h-100">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <h5 class="card-title mb-0">Identidad Visual</h5>
+        <i class="bi bi-palette text-muted fs-4"></i>
+      </div>
+      <div class="card-body">
+        <div class="d-flex align-items-center gap-4 mb-4">
+          <div class="bg-light rounded p-2 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+            {% if config.logo %}
+              <img src="{{ config.logo.url }}" alt="Logo" class="img-fluid" style="max-height: 60px;">
+            {% else %}
+              <i class="bi bi-image text-muted fs-1"></i>
+            {% endif %}
+          </div>
+          <div>
+            <h6 class="mb-1">Logo del Sitio</h6>
+            <p class="small text-muted mb-0">Visible en sidebar y login.</p>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="small text-uppercase fw-semibold text-muted">Nombre del Sitio</label>
+          <div class="fs-5 fw-medium">{{ config.site_name }}</div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-6">
+            <label class="small text-uppercase fw-semibold text-muted">Color Primario</label>
+            <div class="d-flex align-items-center gap-2 mt-1">
+              <div class="rounded-circle border" style="width: 24px; height: 24px; background-color: {{ config.primary_color }};"></div>
+              <span class="font-monospace">{{ config.primary_color }}</span>
+            </div>
+          </div>
+          <div class="col-6">
+            <label class="small text-uppercase fw-semibold text-muted">Color Secundario</label>
+            <div class="d-flex align-items-center gap-2 mt-1">
+              <div class="rounded-circle border" style="width: 24px; height: 24px; background-color: {{ config.secondary_color }};"></div>
+              <span class="font-monospace">{{ config.secondary_color }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Información de Contacto -->
+  <div class="col-12 col-md-6">
+    <div class="card h-100">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <h5 class="card-title mb-0">Información de Contacto</h5>
+        <i class="bi bi-building text-muted fs-4"></i>
+      </div>
+      <div class="card-body">
+        <ul class="list-unstyled mb-0 d-flex flex-column gap-3">
+          <li class="d-flex gap-3">
+            <div class="bg-label-secondary p-2 rounded">
+              <i class="bi bi-geo-alt fs-5"></i>
+            </div>
+            <div>
+              <h6 class="mb-1">Dirección</h6>
+              <p class="mb-0 text-muted small">{{ config.company_address|default:"No configurada"|linebreaksbr }}</p>
+            </div>
+          </li>
+          <li class="d-flex gap-3">
+            <div class="bg-label-secondary p-2 rounded">
+              <i class="bi bi-telephone fs-5"></i>
+            </div>
+            <div>
+              <h6 class="mb-1">Teléfono</h6>
+              <p class="mb-0 text-muted small">{{ config.company_phone|default:"No configurado" }}</p>
+            </div>
+          </li>
+          <li class="d-flex gap-3">
+            <div class="bg-label-secondary p-2 rounded">
+              <i class="bi bi-envelope fs-5"></i>
+            </div>
+            <div>
+              <h6 class="mb-1">Email</h6>
+              <p class="mb-0 text-muted small">{{ config.company_email|default:"No configurado" }}</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Redes Sociales -->
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <h5 class="card-title mb-0">Redes Sociales</h5>
+        <i class="bi bi-share text-muted fs-4"></i>
+      </div>
+      <div class="card-body">
+        <div class="row g-4">
+          <div class="col-6 col-md-3">
+            <div class="d-flex align-items-center gap-2">
+              <i class="bi bi-facebook text-primary fs-4"></i>
+              <div>
+                <div class="small fw-semibold">Facebook</div>
+                {% if config.social_facebook %}
+                  <a href="{{ config.social_facebook }}" target="_blank" class="small text-truncate d-block" style="max-width: 150px;">Ver perfil</a>
+                {% else %}
+                  <span class="small text-muted">-</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="d-flex align-items-center gap-2">
+              <i class="bi bi-twitter-x text-dark fs-4"></i>
+              <div>
+                <div class="small fw-semibold">Twitter / X</div>
+                {% if config.social_twitter %}
+                  <a href="{{ config.social_twitter }}" target="_blank" class="small text-truncate d-block" style="max-width: 150px;">Ver perfil</a>
+                {% else %}
+                  <span class="small text-muted">-</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="d-flex align-items-center gap-2">
+              <i class="bi bi-instagram text-danger fs-4"></i>
+              <div>
+                <div class="small fw-semibold">Instagram</div>
+                {% if config.social_instagram %}
+                  <a href="{{ config.social_instagram }}" target="_blank" class="small text-truncate d-block" style="max-width: 150px;">Ver perfil</a>
+                {% else %}
+                  <span class="small text-muted">-</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="d-flex align-items-center gap-2">
+              <i class="bi bi-linkedin text-info fs-4"></i>
+              <div>
+                <div class="small fw-semibold">LinkedIn</div>
+                {% if config.social_linkedin %}
+                  <a href="{{ config.social_linkedin }}" target="_blank" class="small text-truncate d-block" style="max-width: 150px;">Ver perfil</a>
+                {% else %}
+                  <span class="small text-muted">-</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

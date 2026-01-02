@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }} - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center" style="background-color: var(--ds-bg-body);">
+  <div class="card border-0 shadow-sm" style="max-width: 400px; width: 100%; border-radius: var(--ds-radius-card);">
+    <!-- Header con Logo -->
+    <div class="card-body p-4 p-sm-5">
+      <div class="text-center mb-4">
+        {% if GLOBAL_CONFIG.logo %}
+          <img src="{{ GLOBAL_CONFIG.logo.url }}" alt="{{ GLOBAL_CONFIG.site_name }}" class="img-fluid mb-3" style="max-height: 50px;">
+        {% else %}
+          <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 48px; height: 48px; background-color: rgba(105, 108, 255, 0.1); color: var(--ds-primary);">
+            <i class="bi bi-shield-lock-fill fs-4"></i>
+          </div>
+        {% endif %}
+        <h4 class="mb-2 fw-bold text-dark">{{ GLOBAL_CONFIG.site_name | default:"Agency Dashboard" }}</h4>
+        <p class="text-muted mb-0">{{ GLOBAL_CONFIG.welcome_message|default:"Bienvenido, por favor inicia sesión" }}</p>
+      </div>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+            <i class="bi bi-info-circle-fill me-2"></i> {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post" action="{% url 'accounts:login' %}" class="mb-3">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+        
+        <div class="mb-3">
+          <label for="username" class="form-label small text-uppercase fw-bold text-muted">Usuario o Email</label>
+          <input 
+            type="text" 
+            id="username" 
+            name="username" 
+            class="form-control {% if form.errors %}is-invalid{% endif %}"
+            placeholder="Ingresa tu usuario"
+            value="{{ username }}"
+            autofocus
+            required>
+          {% if form.errors.username %}
+            <div class="invalid-feedback">{{ form.errors.username.0 }}</div>
+          {% endif %}
+        </div>
+
+        <div class="mb-3 form-password-toggle">
+          <div class="d-flex justify-content-between">
+            <label for="password" class="form-label small text-uppercase fw-bold text-muted">Contraseña</label>
+            <a href="#" class="small text-primary text-decoration-none">¿Olvidaste tu contraseña?</a>
+          </div>
+          <div class="input-group input-group-merge">
+            <input 
+              type="password" 
+              id="password" 
+              name="password" 
+              class="form-control {% if form.errors %}is-invalid{% endif %}"
+              placeholder="············"
+              required>
+            <span class="input-group-text cursor-pointer" data-toggle-password>
+              <i class="bi bi-eye"></i>
+            </span>
+          </div>
+          {% if form.errors.password %}
+            <div class="invalid-feedback d-block">{{ form.errors.password.0 }}</div>
+          {% endif %}
+        </div>
+
+        <div class="mb-3">
+          <button class="btn btn-primary d-grid w-100" type="submit">
+            Iniciar Sesión
+          </button>
+        </div>
+      </form>
+
+      <p class="text-center">
+        <span>¿Eres nuevo en la plataforma?</span>
+        <a href="{% url 'accounts:register' %}" class="text-primary text-decoration-none fw-medium">
+          Crear una cuenta
+        </a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const toggleBtn = document.querySelector('[data-toggle-password]');
+    const passwordInput = document.getElementById('password');
+    
+    if (toggleBtn && passwordInput) {
+      toggleBtn.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        
+        const icon = this.querySelector('i');
+        if (type === 'text') {
+          icon.classList.remove('bi-eye');
+          icon.classList.add('bi-eye-slash');
+        } else {
+          icon.classList.remove('bi-eye-slash');
+          icon.classList.add('bi-eye');
+        }
+      });
+    }
+  })();
+</script>
+{% endblock %}

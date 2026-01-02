@@ -1,0 +1,35 @@
+{% comment %}
+Modal System · modal_view.html
+
+Modal para vistas de solo lectura (detalle).
+
+Context esperado:
+- modal_title: str
+- modal_size: sm|md|lg|xl
+- view_template: path de template a incluir dentro del body (server-driven)
+
+Uso:
+- El backend prepara el contenido (context) y el template de vista.
+{% endcomment %}
+
+{% extends 'partials/modals/modal_base.html' %}
+
+{% block modal_body %}
+  {% if modal_state == 'loading' %}
+    {% include 'partials/modals/_modal_loading.html' %}
+  {% elif modal_state == 'error' %}
+    {% include 'partials/modals/_modal_error.html' %}
+  {% else %}
+    {% if view_template %}
+      {% include view_template %}
+    {% else %}
+      <div class="ds-muted">No hay vista para mostrar.</div>
+    {% endif %}
+  {% endif %}
+{% endblock %}
+
+{% block modal_footer %}
+  <div class="d-flex justify-content-end">
+    <button type="button" class="btn btn-outline-secondary btn-sm" data-action="close-modal">Cerrar</button>
+  </div>
+{% endblock %}

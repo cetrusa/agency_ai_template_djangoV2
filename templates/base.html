@@ -1,0 +1,90 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}{{ GLOBAL_CONFIG.site_name }}{% endblock %}</title>
+
+    {# Fonts: Public Sans (Sneat) #}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+      rel="stylesheet"
+    />
+
+    {# Bootstrap 5 (sin bundlers) #}
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
+
+    {# Design System: tokens + capas (base/layout/components) #}
+    <link href="{% static 'css/tokens.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/base.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/layout.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/components.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/modals.css' %}" rel="stylesheet" />
+
+    {# Dynamic Theme Config #}
+    <style>
+      :root {
+        --ds-primary: {{ GLOBAL_CONFIG.primary_color }};
+        /* Simple RGB approximation for opacity layers - in prod use a template tag to convert hex to rgb */
+        /* --ds-primary-rgb: ...; */
+      }
+    </style>
+
+    {% block head %}{% endblock %}
+  </head>
+
+  {% comment %}
+    hx-headers: HTMX enviará el CSRF token en requests (útil para POST desde fragments).
+    hx-history-elt: el contenido intercambiable mantiene historial de navegación.
+  {% endcomment %}
+  <body class="app"
+        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+
+    {% if request.user.is_authenticated %}
+      {% include 'partials/navbar.html' %}
+      <div class="app-shell">
+        {% include 'partials/sidebar.html' %}
+        <div class="app-shell-main">
+    {% endif %}
+
+    <main id="app-content" class="app-content container-fluid" hx-history-elt>
+      {% block content %}{% endblock %}
+    </main>
+
+    {% if request.user.is_authenticated %}
+        </div>
+      </div>
+      {% include 'partials/footer.html' %}
+      {% include 'partials/modals.html' %}
+    {% endif %}
+
+    {# Vendors (sin Node.js) #}
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+
+    {# Charts (opcional): usado por el dashboard demo. #}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <script src="{% static 'js/layout.js' %}"></script>
+    <script src="{% static 'js/modals.js' %}"></script>
+
+    {% block body_end %}{% endblock %}
+  </body>
+</html>

@@ -1,0 +1,25 @@
+{% comment %}
+Modal System · modal_host.html
+
+Host global único para TODOS los modales.
+Regla: este contenedor vive en base.html y nunca se duplica.
+
+Patrón HTMX estándar (abrir):
+- hx-get="/ruta/"
+- hx-target="#modal-host"
+- hx-swap="innerHTML"
+
+El servidor devuelve uno de:
+- partials/modals/modal_form.html
+- partials/modals/modal_confirm.html
+- partials/modals/modal_view.html
+- partials/modals/_modal_error.html (fallback)
+{% endcomment %}
+
+<div id="modal-host" class="ds-modal-host" aria-live="polite" aria-relevant="additions removals"></div>
+
+{# Indicador global del modal host (opcional). #}
+<div id="modal-indicator" class="ds-modal-indicator htmx-indicator" aria-live="polite" aria-busy="true">
+  <div class="spinner-border spinner-border-sm" role="status" aria-label="Cargando"></div>
+  <span class="ms-2">Cargando…</span>
+</div>

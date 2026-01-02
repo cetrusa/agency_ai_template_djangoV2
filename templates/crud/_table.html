@@ -1,0 +1,216 @@
+{% comment %}
+CRUD UI KIT · _table.html
+
+Módulo de tabla enterprise (server-side):
+- Responsive (scroll horizontal)
+- Ordenamiento por columnas
+- Acciones por fila
+- Selección masiva
+- Empty state
+
+HTMX:
+- Los headers de sort son links con hx-get a crud_urls.table manteniendo filtros.
+- La paginación vive en _pagination.html y también refresca este módulo.
+
+Contrato (backend):
+- items: iterable de objetos con:
+  - id: str|int (para checkboxes)
+  - cells: lista (mismo tamaño que columns) con strings/valores ya preparados
+- columns: lista de objetos/dicts con:
+  - key: str (sort key)
+  - label: str
+  - sortable: bool
+  - nowrap: bool opcional
+- page_obj: Django Page
+- paginator: Django Paginator (opcional si page_obj ya lo incluye)
+- total_count: int
+- current_filters: dict con q,status,from,to,sort,dir,page
+- crud_urls: dict con list, table, create, bulk, (opcional) detail
+
+Nota importante:
+- Para mantener querystring “friendly” sin lógica compleja en templates,
+  el backend puede pasar además:
+  - qs: string URL-encoded con filtros actuales SIN page (opcional, recomendado)
+  Si qs no existe, se hará un fallback simple.
+{% endcomment %}
+{% load core_tags %}
+
+<div class="ds-card crud-table-card">
+  <div class="ds-card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <div class="ds-title">{{ entity_label_plural|default:'Listado' }}</div>
+      <div class="ds-muted small">{{ total_count|default:0 }} registros</div>
+    </div>
+
+    {# Acciones masivas: visible cuando hay selección. #}
+    {% include 'crud/_bulk_actions.html' %}
+  </div>
+
+  <div class="ds-card-body p-0">
+    <div class="table-responsive crud-table-scroll" tabindex="0" aria-label="Tabla">
+      <table class="table table-hover align-middle mb-0 ds-table">
+        <thead>
+          <tr>
+            <th class="px-3 py-3 crud-col-check" scope="col">
+              <input class="form-check-input"
+                     type="checkbox"
+                     aria-label="Seleccionar todos"
+                     data-crud-select-all />
+            </th>
+
+            {% for col in columns %}
+              <th class="py-3 {% if col.nowrap %}text-nowrap{% endif %}" scope="col">
+                {% if col.sortable %}
+                  {% comment %}
+                    Sort contract:
+                    - sort: col.key
+                    - dir: asc|desc
+                    - mantiene filtros actuales
+
+                    Recomendación backend:
+                    - pasar qs (filtros sin page) para evitar lógica aquí.
+                  {% endcomment %}
+                  {% if current_filters.sort == col.key and current_filters.dir == 'asc' %}
+                    {% with next_dir='desc' %}
+                      <a class="crud-sort-link"
+                         href="{{ crud_urls.list }}?sort={{ col.key }}&dir={{ next_dir }}{% if qs %}&{{ qs }}{% endif %}"
+                         hx-get="{{ crud_urls.table }}?sort={{ col.key }}&dir={{ next_dir }}{% if qs %}&{{ qs }}{% endif %}"
+                         hx-target="#crud-table"
+                         hx-swap="innerHTML"
+                         hx-push-url="true"
+                         hx-indicator="#crud-indicator"
+                         aria-label="Ordenar por {{ col.label }}">
+                        {{ col.label }}
+                        <i class="bi bi-sort-up"></i>
+                      </a>
+                    {% endwith %}
+                  {% elif current_filters.sort == col.key and current_filters.dir == 'desc' %}
+                    {% with next_dir='asc' %}
+                      <a class="crud-sort-link"
+                         href="{{ crud_urls.list }}?sort={{ col.key }}&dir={{ next_dir }}{% if qs %}&{{ qs }}{% endif %}"
+                         hx-get="{{ crud_urls.table }}?sort={{ col.key }}&dir={{ next_dir }}{% if qs %}&{{ qs }}{% endif %}"
+                         hx-target="#crud-table"
+                         hx-swap="innerHTML"
+                         hx-push-url="true"
+                         hx-indicator="#crud-indicator"
+                         aria-label="Ordenar por {{ col.label }}">
+                        {{ col.label }}
+                        <i class="bi bi-sort-down"></i>
+                      </a>
+                    {% endwith %}
+                  {% else %}
+                    <a class="crud-sort-link"
+                       href="{{ crud_urls.list }}?sort={{ col.key }}&dir=asc{% if qs %}&{{ qs }}{% endif %}"
+                       hx-get="{{ crud_urls.table }}?sort={{ col.key }}&dir=asc{% if qs %}&{{ qs }}{% endif %}"
+                       hx-target="#crud-table"
+                       hx-swap="innerHTML"
+                       hx-push-url="true"
+                       hx-indicator="#crud-indicator"
+                       aria-label="Ordenar por {{ col.label }}">
+                      {{ col.label }}
+                      <i class="bi bi-arrow-down-up"></i>
+                    </a>
+                  {% endif %}
+                {% else %}
+                  <span class="ds-muted">{{ col.label }}</span>
+                {% endif %}
+              </th>
+            {% endfor %}
+
+            <th class="py-3 text-end crud-col-actions" scope="col">
+              <span class="ds-muted">Acciones</span>
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for item in items %}
+            <tr data-crud-row>
+              <td class="px-3 py-3">
+                <input class="form-check-input"
+                       type="checkbox"
+                       aria-label="Seleccionar fila"
+                       data-crud-row-check
+                       value="{{ item.id }}" />
+              </td>
+
+              {% for cell in item.cells %}
+                <td class="py-3 {% if cell.col.nowrap %}text-nowrap{% endif %}">
+                  {% if cell.col.type == 'badge' %}
+                      {% with val=cell.value map=cell.col.extra.colors %}
+                        {% if val %}
+                            <span class="badge bg-label-{{ map|get_item:val|default:'primary' }}">
+                                {{ cell.col.extra.labels|get_item:val|default:val }}
+                            </span>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                      {% endwith %}
+                  {% elif cell.col.type == 'image' %}
+                      {% if cell.value %}
+                        <img src="{{ cell.value }}" 
+                             alt="Img" 
+                             class="d-block {% if cell.col.extra.rounded %}rounded-circle{% else %}rounded{% endif %}"
+                             height="{{ cell.col.extra.height|default:32 }}"
+                             width="{{ cell.col.extra.width|default:32 }}"
+                             style="object-fit: cover;">
+                      {% else %}
+                        <span class="text-muted">-</span>
+                      {% endif %}
+                  {% elif cell.col.type == 'boolean' %}
+                      {% if cell.value %}
+                        <i class="bx bx-check text-success fs-4"></i>
+                      {% else %}
+                        <i class="bx bx-x text-danger fs-4"></i>
+                      {% endif %}
+                  {% elif cell.col.type == 'link' %}
+                      <a href="{{ cell.value }}" target="{{ cell.col.extra.target|default:'_self' }}">
+                        {{ cell.value }}
+                      </a>
+                  {% elif cell.col.type == 'date' %}
+                      {{ cell.value|date:"d/m/Y H:i" }}
+                  {% else %}
+                      {{ cell.value }}
+                  {% endif %}
+                </td>
+              {% endfor %}
+
+              <td class="py-3 text-end">
+                {% include 'crud/_row_actions.html' with item=item %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td class="px-3 py-5" colspan="{{ columns|length|add:2 }}">
+                <div class="crud-empty text-center">
+                  <div class="ds-title mb-1">Sin resultados</div>
+                  <div class="ds-muted mb-3">Prueba ajustando filtros o crea un nuevo registro.</div>
+
+                  <button class="btn btn-primary btn-sm"
+                          type="button"
+                          hx-get="{{ crud_urls.create }}"
+                      hx-target="#modal-host"
+                      hx-swap="innerHTML"
+                          hx-indicator="#crud-indicator">
+                    <i class="bi bi-plus-lg"></i>
+                    Crear {{ entity_label|default:"" }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="px-3 py-3 d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div class="ds-muted small">
+      {% if page_obj %}
+        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+      {% endif %}
+    </div>
+
+    {% include 'crud/_pagination.html' %}
+  </div>
+</div>

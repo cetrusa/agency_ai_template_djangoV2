@@ -1,0 +1,32 @@
+{# Form HTMX: se reemplaza a sí mismo (swap=innerHTML) #}
+<form
+  hx-post="{% url 'dashboard:quick_action' %}"
+  hx-target="#quick-action"
+  hx-swap="innerHTML">
+
+  {% csrf_token %}
+
+  <div class="mb-3">
+    <label class="form-label">{{ form.title.label }}</label>
+    {{ form.title }}
+    {% if form.title.errors %}
+      <div class="text-danger small mt-1">{{ form.title.errors|striptags }}</div>
+    {% endif %}
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">{{ form.priority.label }}</label>
+    {{ form.priority }}
+    {% if form.priority.errors %}
+      <div class="text-danger small mt-1">{{ form.priority.errors|striptags }}</div>
+    {% endif %}
+  </div>
+
+  <div class="d-flex justify-content-end gap-2">
+    <button class="btn btn-outline-secondary btn-sm" type="reset">Limpiar</button>
+    <button class="btn btn-primary btn-sm" type="submit">
+      <i class="bi bi-check2"></i>
+      Guardar
+    </button>
+  </div>
+</form>

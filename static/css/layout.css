@@ -1,0 +1,106 @@
+/*
+Layout - Sneat Style
+- Floating Navbar
+- Clean Sidebar
+- Card-based Content
+*/
+
+.app-navbar {
+  height: var(--ds-navbar-h);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(6px);
+  margin: 0.75rem 1.5rem 0 1.5rem; /* Floating effect */
+  border-radius: var(--ds-radius-card);
+  box-shadow: var(--ds-shadow-sm);
+  z-index: 1000;
+  /* No border bottom */
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: var(--ds-sidebar-w) 1fr;
+  min-height: 100vh;
+}
+
+.app-sidebar {
+  background: transparent; /* Blends with body bg */
+  padding: 0.75rem;
+  /* No border right */
+}
+
+.app-content {
+  padding: 1.5rem;
+  margin-top: 0; /* Navbar is inside the grid flow but visually floating */
+}
+
+/* Sidebar Navigation */
+.app-sidebar .nav-link {
+  border-radius: var(--ds-radius-btn);
+  color: var(--ds-text-body);
+  padding: 0.625rem 1rem;
+  margin-bottom: 0.25rem;
+  font-weight: 400;
+  transition: all 0.2s ease-in-out;
+}
+
+.app-sidebar .nav-link:hover {
+  background: rgba(67, 89, 113, 0.04);
+  color: var(--ds-text-heading);
+}
+
+.app-sidebar .nav-link.is-active {
+  background: linear-gradient(72.47deg, var(--ds-primary) 22.16%, rgba(105, 108, 255, 0.7) 76.47%);
+  color: #fff;
+  box-shadow: 0 2px 6px 0 rgba(105, 108, 255, 0.48);
+}
+
+.app-sidebar .nav-link i {
+  margin-right: 0.5rem;
+  font-size: 1.1rem;
+  vertical-align: middle;
+}
+
+/* Sidebar collapsed */
+body.sidebar-collapsed .app-shell {
+  grid-template-columns: 5rem 1fr;
+}
+
+body.sidebar-collapsed .sidebar-label {
+  display: none;
+}
+
+body.sidebar-collapsed .app-sidebar .nav-link {
+  text-align: center;
+  padding: 0.625rem 0;
+}
+
+body.sidebar-collapsed .app-sidebar .nav-link i {
+  margin-right: 0;
+}
+
+@media (max-width: 992px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .app-sidebar {
+    display: none;
+  }
+  
+  .app-navbar {
+    margin: 0;
+    border-radius: 0;
+  }
+
+  body.sidebar-open .app-sidebar {
+    display: block;
+    position: fixed;
+    top: var(--ds-navbar-h);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--ds-bg-surface);
+    z-index: 1040;
+    box-shadow: var(--ds-shadow-hover);
+  }
+}

@@ -1,0 +1,23 @@
+<div class="row g-3">
+  {% for kpi in kpis %}
+  <div class="col-12 col-md-6 col-xl-3">
+    <div class="ds-card">
+      <div class="ds-card-body ds-kpi">
+        <div>
+          <div class="ds-muted small">{{ kpi.label }}</div>
+          <div class="ds-kpi-value">{{ kpi.value }}</div>
+          {% if kpi.sub_label %}
+            <div class="ds-muted small">{{ kpi.sub_label }}</div>
+          {% endif %}
+        </div>
+        {% if kpi.badge_text %}
+            <span class="ds-pill ds-pill-{{ kpi.badge_color }}">{{ kpi.badge_text }}</span>
+        {% endif %}
+        {% if kpi.icon %}
+            <i class="bi {{ kpi.icon }} fs-3 text-muted opacity-50"></i>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
