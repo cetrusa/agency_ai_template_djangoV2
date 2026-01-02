@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Miembros de la organización{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+      <h4 class="mb-1">Miembros</h4>
+      {% if organization %}
+        <div class="text-muted small">Organización activa: {{ organization.name }}</div>
+      {% endif %}
+    </div>
+    <div class="d-flex gap-2">
+      {% if can_create_members %}
+        <button class="btn btn-primary"
+                hx-get="{% url 'usuarios:create' %}"
+                hx-target="#modal-container"
+                hx-swap="innerHTML">
+          <i class="bi bi-person-plus me-1"></i> Agregar miembro
+        </button>
+      {% endif %}
+    </div>
+  </div>
+
+  <div id="messages">
+    {% include 'usuarios/_messages.html' %}
+  </div>
+
+  <div id="members-table">
+    {% include 'usuarios/_table.html' %}
+  </div>
+</div>
+
+<div id="modal-container"></div>
+{% endblock %}

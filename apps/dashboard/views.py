@@ -17,6 +17,7 @@ import random
 from datetime import timedelta
 from django.utils import timezone
 
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -25,6 +26,7 @@ from django.shortcuts import render, redirect
 
 from apps.core.dashboard.defs import KpiDef, ChartDef, ChartDataset
 from apps.orgs.decorators import organization_required
+from apps.orgs.utils import SESSION_KEY
 from .forms import DemoQuickActionForm, DemoTableFilterForm
 
 
@@ -39,8 +41,14 @@ def dashboard(request: HttpRequest) -> HttpResponse:
     if not request.user.is_staff and not request.user.groups.exists():
         return redirect("accounts:verification_pending")
 
+    org = getattr(request, "organization", None)
+    if org and not getattr(org, "is_active", False):
+        request.session.pop(SESSION_KEY, None)
+        messages.error(request, "Selecciona una organización válida para continuar.")
+        return redirect("orgs:select")
+
     template = "dashboard/index.html" if _is_htmx(request) else "pages/dashboard.html"
-    return render(request, template)
+    return render(request, template, {"organization": org})
 
 
 @login_required

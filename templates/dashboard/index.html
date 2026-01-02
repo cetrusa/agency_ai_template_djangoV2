@@ -10,6 +10,9 @@ Este template se usa como:
   <div>
     <div class="ds-title h4 mb-1">Dashboard</div>
     <div class="ds-muted">Base reusable estilo Admin moderno (SSR + HTMX).</div>
+    {% if organization %}
+      <div class="ds-muted small">Organización activa: {{ organization.name }}</div>
+    {% endif %}
   </div>
 
   <div class="d-flex gap-2">

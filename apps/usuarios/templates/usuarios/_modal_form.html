@@ -1,0 +1,50 @@
+<div class="modal fade show" style="display:block;" aria-modal="true" role="dialog">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Agregar miembro</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% if errors %}
+          <div class="alert alert-danger">
+            {% for error in errors %}
+              <div>{{ error.message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+        <form id="create-member-form"
+              hx-post="{% url 'usuarios:create_submit' %}"
+              hx-target="#modal-container"
+              hx-swap="innerHTML"
+              hx-indicator="#modal-indicator">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label" for="email">Email</label>
+            <input class="form-control" type="email" name="email" id="email" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="first_name">Nombre</label>
+            <input class="form-control" type="text" name="first_name" id="first_name">
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="last_name">Apellidos</label>
+            <input class="form-control" type="text" name="last_name" id="last_name">
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="role">Rol</label>
+            <select class="form-select" name="role" id="role">
+              <option value="member">Miembro</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div class="d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+        </form>
+        <div id="modal-indicator" class="htmx-indicator mt-2 small text-muted">Procesando…</div>
+      </div>
+    </div>
+  </div>
+</div>

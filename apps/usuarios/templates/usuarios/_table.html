@@ -1,0 +1,69 @@
+<div class="card shadow-sm">
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <div class="fw-semibold">Miembros</div>
+  </div>
+  <div class="table-responsive mb-0">
+    <table class="table table-hover align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Nombre</th>
+          <th>Rol</th>
+          <th>Estado</th>
+          <th class="text-end">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for membership in memberships %}
+          <tr>
+            <td>{{ membership.user.email|default:membership.user.username }}</td>
+            <td>{{ membership.user.get_full_name|default:membership.user.username }}</td>
+            <td>{{ membership.get_role_display }}</td>
+            <td>
+              {% if membership.is_active %}
+                <span class="badge bg-success-subtle text-success">Activo</span>
+              {% else %}
+                <span class="badge bg-secondary-subtle text-secondary">Inactivo</span>
+              {% endif %}
+            </td>
+            <td class="text-end">
+              {% if can_manage_members %}
+                <div class="btn-group btn-group-sm" role="group">
+                  <button class="btn btn-outline-primary"
+                          type="button"
+                          hx-get="{% url 'usuarios:edit' membership.id %}"
+                          hx-target="#modal-container"
+                          hx-swap="innerHTML">
+                    Editar
+                  </button>
+                  {% if membership.is_active %}
+                    <button class="btn btn-outline-warning"
+                            type="button"
+                            hx-post="{% url 'usuarios:toggle' membership.id %}"
+                            hx-vals='{"active": false}'
+                            hx-swap="none"
+                            hx-confirm="¿Desactivar miembro?">
+                      Desactivar
+                    </button>
+                  {% else %}
+                    <button class="btn btn-outline-success"
+                            type="button"
+                            hx-post="{% url 'usuarios:toggle' membership.id %}"
+                            hx-vals='{"active": true}'
+                            hx-swap="none">
+                      Reactivar
+                    </button>
+                  {% endif %}
+                </div>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5" class="text-center py-4 text-muted">No hay miembros en esta organización.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
