@@ -1,6 +1,6 @@
 {# Navbar superior: acciones globales. #}
-<nav class="app-navbar d-flex align-items-center">
-  <div class="container-fluid d-flex align-items-center justify-content-between">
+<nav class="app-navbar d-flex align-items-center py-2 px-3">
+  <div class="container-fluid d-flex align-items-center justify-content-between gap-3">
     <div class="d-flex align-items-center gap-2">
       <button class="btn btn-outline-secondary btn-sm"
               type="button"
@@ -9,7 +9,7 @@
         <i class="bi bi-layout-sidebar-inset"></i>
       </button>
 
-      <a class="navbar-brand m-0 ds-title"
+      <a class="navbar-brand m-0 ds-title d-flex align-items-center gap-2"
          href="{% url 'dashboard:home' %}"
          hx-get="{% url 'dashboard:home' %}"
          hx-target="#app-content"

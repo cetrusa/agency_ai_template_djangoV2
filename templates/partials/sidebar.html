@@ -9,7 +9,7 @@ Regla:
 <aside class="app-sidebar p-3 bg-body border-end shadow-sm rounded-3">
   <div class="mb-3 ds-muted text-uppercase small fw-semibold">MENÚ</div>
 
-  <nav class="nav flex-column gap-2 small">
+  <nav class="nav nav-pills flex-column gap-2 small">
     {% for module in request.navigation_modules %}
       <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded-3"
          href="{% url module.url_name %}"

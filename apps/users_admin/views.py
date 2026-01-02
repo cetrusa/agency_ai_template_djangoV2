@@ -18,7 +18,7 @@ from urllib.parse import parse_qs, urlparse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
+from django.http import FileResponse, HttpRequest, HttpResponse, HttpResponseForbidden, StreamingHttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.contrib import messages
@@ -180,10 +180,11 @@ def edit_view(request: HttpRequest, id: int) -> HttpResponse:
 
     if request.method == "POST":
         form = form_class(request.POST, instance=obj)
-        if hasattr(form, "set_request_user"):
-            form.set_request_user(request.user)
+        setter = getattr(form, "set_request_user", None)
+        if callable(setter):
+            setter(request.user)
         elif hasattr(form, "request_user"):
-            form.request_user = request.user
+            setattr(form, "request_user", request.user)
         if form.is_valid():
             with transaction.atomic():
                 form.save()
@@ -203,10 +204,11 @@ def edit_view(request: HttpRequest, id: int) -> HttpResponse:
         )
 
     form = form_class(instance=obj)
-    if hasattr(form, "set_request_user"):
-        form.set_request_user(request.user)
+    setter = getattr(form, "set_request_user", None)
+    if callable(setter):
+        setter(request.user)
     elif hasattr(form, "request_user"):
-        form.request_user = request.user
+        setattr(form, "request_user", request.user)
     return render(
         request,
         "partials/modals/modal_form.html",
@@ -312,7 +314,7 @@ def toggle_view(request: HttpRequest, id: int) -> HttpResponse:
 
 
 @login_required
-def export_csv_view(request: HttpRequest) -> HttpResponse:
+def export_csv_view(request: HttpRequest) -> HttpResponse | StreamingHttpResponse:
     """Exportar usuarios a CSV con datos completos para auditoría."""
     config = get_crud(CRUD_SLUG_USERS)
     if not config.can_export(request):
@@ -356,7 +358,7 @@ def export_csv_view(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
-def export_xlsx_view(request: HttpRequest) -> HttpResponse:
+def export_xlsx_view(request: HttpRequest) -> HttpResponse | FileResponse:
     """Exportar usuarios a Excel con datos completos para auditoría."""
     config = get_crud(CRUD_SLUG_USERS)
     if not config.can_export(request):
@@ -401,7 +403,7 @@ def export_xlsx_view(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
-def export_pdf_view(request: HttpRequest) -> HttpResponse:
+def export_pdf_view(request: HttpRequest) -> HttpResponse | FileResponse:
     """Exportar usuarios a PDF con datos completos para auditoría."""
     config = get_crud(CRUD_SLUG_USERS)
     if not config.can_export(request):

@@ -115,7 +115,8 @@ class UserCrudConfig(CrudConfig):
                     "Superusuario": "danger",
                     "Staff": "warning",
                     "Usuario": "secondary",
-                }
+                },
+                "labels": {},
             },
         ),
         ColumnDef(
@@ -130,7 +131,8 @@ class UserCrudConfig(CrudConfig):
                 "colors": {
                     "Activo": "success",
                     "Inactivo": "secondary",
-                }
+                },
+                "labels": {},
             },
         ),
         ColumnDef(
@@ -184,24 +186,24 @@ class UserCrudConfig(CrudConfig):
         "date_joined",
         "last_login",
     ]
-    export_headers = [
-        "Usuario",
-        "Nombre",
-        "Apellido",
-        "Email",
-        "Activo",
-        "Es Staff",
-        "Es Superusuario",
-        "Fecha Alta",
-        "Último Acceso",
-    ]
+    export_headers = {
+        "username": "Usuario",
+        "first_name": "Nombre",
+        "last_name": "Apellido",
+        "email": "Email",
+        "is_active": "Activo",
+        "is_staff": "Es Staff",
+        "is_superuser": "Es Superusuario",
+        "date_joined": "Fecha Alta",
+        "last_login": "Último Acceso",
+    }
     export_formats = {"csv", "xlsx", "pdf"}
 
     def row_urls(self, obj, request: HttpRequest, params):
         return {
             "detail": None,
             "edit": reverse("users_admin:edit", args=[obj.pk]),
-            "delete": reverse("users_admin:toggle", args=[obj.pk]),
+            "delete": None,
         }
     
     def get_base_queryset(self, request: HttpRequest) -> QuerySet:

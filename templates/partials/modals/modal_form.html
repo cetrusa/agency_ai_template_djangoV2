@@ -1,3 +1,5 @@
+{% extends 'partials/modals/modal_base.html' %}
+
 {% comment %}
 Modal System · modal_form.html
 
@@ -22,8 +24,6 @@ HTMX:
   - HX-Trigger: {"crudChanged": true, "modalClose": true}
   - (opcional) devolver alerts OOB aparte.
 {% endcomment %}
-
-{% extends 'partials/modals/modal_base.html' %}
 
 {% block modal_body %}
   {% if modal_state == 'loading' %}
