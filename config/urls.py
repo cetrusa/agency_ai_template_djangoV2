@@ -25,9 +25,12 @@ urlpatterns = [
     path("crud-example/", include("apps.crud_example.urls")),
     path("dashboard/", include(("apps.dashboard.urls", "dashboard"), namespace="dashboard")),
     path("organization/", include("apps.organization_admin.urls")),
-    path("users/", include("apps.users_admin.urls")),
     path("usuarios/", include(("apps.usuarios.urls", "usuarios"), namespace="usuarios")),
     path("orgs/", include(("apps.orgs.urls", "orgs"), namespace="orgs")),
+    path(
+        "users-admin/",
+        include(("apps.users_admin.urls", "users_admin"), namespace="users_admin"),
+    ),
     path("", include(("apps.dashboard.urls", "dashboard"), namespace="home")),  # Default redirect (namespace distinto para evitar colisión)
 ]
 

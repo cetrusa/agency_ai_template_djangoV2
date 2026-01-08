@@ -7,6 +7,9 @@ from dataclasses import dataclass
 class ListMembersInput:
     organization_id: int
     include_inactive: bool = False
+    search: str | None = None
+    role: str | None = None
+    is_active: bool | None = None
 
 
 @dataclass
@@ -33,3 +36,13 @@ class ToggleMemberActiveInput:
     organization_id: int
     member_id: int
     active: bool
+
+
+@dataclass
+class ExportMembersInput:
+    organization_id: int
+    include_inactive: bool = False
+    search: str | None = None
+    role: str | None = None
+    is_active: bool | None = None
+    format: str = "csv"

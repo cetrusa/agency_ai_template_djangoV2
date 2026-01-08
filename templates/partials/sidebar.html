@@ -27,10 +27,6 @@ Regla:
       <i class="bi bi-building"></i>
       <span class="sidebar-label">Empresa</span>
     </a>
-    <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded-3" href="{% url 'users_admin:list' %}">
-      <i class="bi bi-people"></i>
-      <span class="sidebar-label">Usuarios</span>
-    </a>
   </nav>
 
   <hr class="my-4" />
@@ -39,10 +35,7 @@ Regla:
   <div class="d-grid gap-2 pt-1">
     <a class="btn btn-outline-secondary btn-sm"
        href="{% url 'dashboard:home' %}"
-       hx-get="{% url 'dashboard:home' %}"
-       hx-target="#app-content"
-       hx-swap="innerHTML"
-       hx-push-url="true">
+       hx-boost="false">
       <i class="bi bi-house"></i> Inicio
     </a>
   </div>

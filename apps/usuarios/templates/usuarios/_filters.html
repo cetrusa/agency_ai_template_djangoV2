@@ -1,0 +1,50 @@
+<div class="card mb-3 shadow-sm">
+  <div class="card-body">
+    <form class="row g-2"
+          hx-get=""
+          hx-target="#members-table"
+          hx-swap="outerHTML"
+          hx-trigger="keyup changed delay:500ms, submit">
+      <div class="col-12 col-md-4">
+        <label class="form-label mb-1" for="filter-q">Buscar</label>
+        <input type="search"
+               class="form-control"
+               name="q"
+               id="filter-q"
+               value="{{ filters.q }}"
+               placeholder="Nombre o email">
+      </div>
+      <div class="col-6 col-md-3">
+        <label class="form-label mb-1" for="filter-role">Rol</label>
+        <select class="form-select" name="role" id="filter-role">
+          <option value="">Todos</option>
+          <option value="admin" {% if filters.role == 'admin' %}selected{% endif %}>Admin</option>
+          <option value="member" {% if filters.role == 'member' %}selected{% endif %}>Miembro</option>
+        </select>
+      </div>
+      <div class="col-6 col-md-3">
+        <label class="form-label mb-1" for="filter-status">Estado</label>
+        <select class="form-select" name="status" id="filter-status">
+          <option value="">Todos</option>
+          <option value="active" {% if filters.status == 'active' %}selected{% endif %}>Activo</option>
+          <option value="inactive" {% if filters.status == 'inactive' %}selected{% endif %}>Inactivo</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-2 d-flex align-items-end">
+        <button type="submit" class="btn btn-outline-secondary w-100">Filtrar</button>
+      </div>
+      <div class="col-12 col-md-2 d-flex align-items-end">
+        <div class="dropdown w-100">
+          <button class="btn btn-outline-primary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Exportar
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end w-100">
+            <li><a class="dropdown-item" href="{% url 'usuarios:export' %}?q={{ filters.q|urlencode }}&role={{ filters.role }}&status={{ filters.status }}&format=csv">CSV</a></li>
+            <li><a class="dropdown-item" href="{% url 'usuarios:export' %}?q={{ filters.q|urlencode }}&role={{ filters.role }}&status={{ filters.status }}&format=xlsx">Excel</a></li>
+            <li><a class="dropdown-item" href="{% url 'usuarios:export' %}?q={{ filters.q|urlencode }}&role={{ filters.role }}&status={{ filters.status }}&format=pdf">PDF</a></li>
+          </ul>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

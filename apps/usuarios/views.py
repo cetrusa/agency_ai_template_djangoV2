@@ -12,11 +12,13 @@ from apps.service_core.infra.context import ExecutionContext
 from apps.service_core.base.result import ServiceError
 from apps.usuarios.domain.inputs import (
     CreateMemberInput,
+    ExportMembersInput,
     ListMembersInput,
     ToggleMemberActiveInput,
     UpdateMemberInput,
 )
 from apps.usuarios.services.create_member import CreateMemberService
+from apps.usuarios.services.export_members import ExportMembersService
 from apps.usuarios.services.list_members import ListMembersService
 from apps.usuarios.services.toggle_member import ToggleMemberService
 from apps.usuarios.services.update_member import UpdateMemberService
@@ -34,8 +36,24 @@ def _list_members(request: HttpRequest):
     if not org:
         return []
     service = ListMembersService()
+    search = request.GET.get("q") or None
+    role = request.GET.get("role") or None
+    status = request.GET.get("status") or None
+
+    is_active = None
+    if status == "active":
+        is_active = True
+    elif status == "inactive":
+        is_active = False
+
     result = service.execute(
-        ListMembersInput(organization_id=org.id, include_inactive=True),
+        ListMembersInput(
+            organization_id=org.id,
+            include_inactive=True,
+            search=search,
+            role=role,
+            is_active=is_active,
+        ),
         actor=request.user,
     )
     return result.data.get("memberships", []) if result.ok else []
@@ -67,6 +85,15 @@ def index(request: HttpRequest) -> HttpResponse:
     can_manage = bool(membership and membership.role == "admin")
     context["can_create_members"] = can_manage
     context["can_manage_members"] = can_manage
+    context["filters"] = {
+        "q": request.GET.get("q", ""),
+        "role": request.GET.get("role", ""),
+        "status": request.GET.get("status", ""),
+    }
+
+    if request.headers.get("HX-Request"):
+        return render(request, "usuarios/_table.html", context)
+
     return render(request, "usuarios/index.html", context)
 
 
@@ -255,3 +282,42 @@ def toggle_member_active(request: HttpRequest, member_id: int) -> HttpResponse:
     ])
     oob_message = f'<div id="messages" hx-swap-oob="true">{error_html}</div>'
     return HttpResponse(oob_message, status=200)
+
+
+@login_required
+@organization_required
+def export_members(request: HttpRequest) -> HttpResponse:
+    org = getattr(request, "organization", None)
+    if not org:
+        return redirect("orgs:select")
+
+    fmt = (request.GET.get("format") or "csv").lower()
+    search = request.GET.get("q") or None
+    role = request.GET.get("role") or None
+    status = request.GET.get("status") or None
+
+    is_active = None
+    if status == "active":
+        is_active = True
+    elif status == "inactive":
+        is_active = False
+
+    input_obj = ExportMembersInput(
+        organization_id=org.id,
+        include_inactive=True,
+        search=search,
+        role=role,
+        is_active=is_active,
+        format=fmt,
+    )
+
+    context = ExecutionContext(actor=request.user, organization=org)
+    service = ExportMembersService(context=context)
+    result = service.execute(input_obj, actor=request.user)
+
+    if result.ok and result.data.get("http_response"):
+        return result.data["http_response"]
+
+    errors = result.errors or [ServiceError(code="unknown", message="No se pudo exportar los miembros.")]
+    # Respond with 400 and plain text error
+    return HttpResponse("; ".join([e.message for e in errors]), status=400)

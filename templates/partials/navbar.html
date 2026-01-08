@@ -10,11 +10,8 @@
       </button>
 
       <a class="navbar-brand m-0 ds-title d-flex align-items-center gap-2"
-         href="{% url 'dashboard:home' %}"
-         hx-get="{% url 'dashboard:home' %}"
-         hx-target="#app-content"
-         hx-swap="innerHTML"
-         hx-push-url="true">
+        href="{% url 'dashboard:home' %}"
+        hx-boost="false">
          {% if GLOBAL_CONFIG.logo %}
             <img src="{{ GLOBAL_CONFIG.logo.url }}" alt="{{ GLOBAL_CONFIG.site_name }}" height="24" class="d-inline-block align-text-top me-2">
          {% endif %}
@@ -38,20 +35,12 @@
           <li><span class="dropdown-item-text small text-muted">{{ request.user.email|default:"Sin email" }}</span></li>
           <li><hr class="dropdown-divider"></li>
           <li>
-            <a class="dropdown-item" href="{% url 'accounts:profile' %}"
-               hx-get="{% url 'accounts:profile' %}"
-               hx-target="#app-content"
-               hx-swap="innerHTML"
-               hx-push-url="true">
+            <a class="dropdown-item" href="{% url 'accounts:profile' %}" hx-boost="false">
               <i class="bi bi-person me-2"></i>Mi Perfil
             </a>
           </li>
           <li>
-            <a class="dropdown-item" href="{% url 'accounts:password_change' %}"
-               hx-get="{% url 'accounts:password_change' %}"
-               hx-target="#app-content"
-               hx-swap="innerHTML"
-               hx-push-url="true">
+            <a class="dropdown-item" href="{% url 'accounts:password_change' %}" hx-boost="false">
               <i class="bi bi-key me-2"></i>Cambiar Contraseña
             </a>
           </li>

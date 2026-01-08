@@ -52,7 +52,14 @@ DJANGO_DB_ENGINE=django.db.backends.mysql
 DJANGO_DB_NAME=agency_dashboard
 DJANGO_DB_USER=root
 DJANGO_DB_PASSWORD=        # Contraseña de tu MySQL local
-DJANGO_DB_HOST=127.0.0.1
+DJANGO_DB_HOST=127.0.0.1   # Si corres Django LOCAL (fuera de Docker)
+DJANGO_DB_PORT=3306
+```
+
+Si corres Django dentro de Docker y quieres apuntar a Laragon (host), usa:
+
+```env
+DJANGO_DB_HOST=host.docker.internal
 DJANGO_DB_PORT=3306
 ```
 

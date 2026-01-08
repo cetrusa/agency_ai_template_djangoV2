@@ -47,8 +47,7 @@ def dashboard(request: HttpRequest) -> HttpResponse:
         messages.error(request, "Selecciona una organización válida para continuar.")
         return redirect("orgs:select")
 
-    template = "dashboard/index.html" if _is_htmx(request) else "pages/dashboard.html"
-    return render(request, template, {"organization": org})
+    return render(request, "pages/dashboard.html", {"organization": org})
 
 
 @login_required

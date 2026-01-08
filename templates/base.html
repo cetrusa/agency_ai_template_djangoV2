@@ -49,8 +49,8 @@
     hx-headers: HTMX enviará el CSRF token en requests (útil para POST desde fragments).
     hx-history-elt: el contenido intercambiable mantiene historial de navegación.
   {% endcomment %}
-  <body class="app"
-        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <body class="app"
+      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
 
     {% if request.user.is_authenticated %}
       {% include 'partials/navbar.html' %}

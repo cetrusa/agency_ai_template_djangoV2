@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from django.db.models import QuerySet
+from django.db.models import Q, QuerySet
 
 from apps.orgs.models import Membership
 from apps.service_core.base.result import ServiceResult
@@ -35,7 +35,21 @@ class ListMembersService(BaseService):
             .filter(organization_id=input_data.organization_id)
         )
 
-        if not input_data.include_inactive:
+        if input_data.search:
+            term = input_data.search.strip()
+            if term:
+                qs = qs.filter(
+                    Q(user__first_name__icontains=term)
+                    | Q(user__last_name__icontains=term)
+                    | Q(user__email__icontains=term)
+                )
+
+        if input_data.role:
+            qs = qs.filter(role=input_data.role)
+
+        if input_data.is_active is not None:
+            qs = qs.filter(is_active=input_data.is_active)
+        elif not input_data.include_inactive:
             qs = qs.filter(is_active=True)
 
         memberships = list(qs.order_by("user__email", "user__username"))

@@ -8,7 +8,9 @@ Plantilla Django SSR (Templates) + HTMX para dashboards administrativos.
 - CRUD Kit Enterprise V1 (listado + tabla partial con filtros/orden/paginación).
 - Sistema de modales reusable (HTMX) para formularios y confirmaciones.
 - Export engine server-side (CSV/XLSX/PDF).
-- docker-compose con PostgreSQL y Redis (Redis reservado para uso futuro).
+- docker-compose con Redis y modo DB flexible:
+	- PostgreSQL opcional via perfil `postgres`.
+	- MySQL/MariaDB del host (ej. Laragon en `3306`) soportado via `.env` (`DJANGO_DB_HOST=host.docker.internal`).
 
 ## Qué NO incluye todavía (intencional)
 
@@ -30,6 +32,33 @@ Para que el envío de correos funcione, configura las variables SMTP en `.env` o
 - En desarrollo, los correos se imprimen en la consola si no hay SMTP configurado.
 
 ## Uso
+
+### Docker + MySQL (Laragon, puerto 3306)
+
+Pre-requisito: tener MySQL corriendo en Windows (Laragon) y una base creada (ej. `agency_db`).
+
+En `PROJECT_BASE/.env` (ejemplo):
+
+- `DJANGO_DB_ENGINE=django.db.backends.mysql`
+- `DJANGO_DB_HOST=host.docker.internal`
+- `DJANGO_DB_PORT=3306`
+
+Levantar contenedores (sin Postgres):
+
+- `docker compose up -d --build web redis`
+
+Aplicar migraciones dentro del contenedor:
+
+- `docker compose exec -T web python manage.py migrate`
+
+Notas:
+
+- En Windows + Docker Desktop, `host.docker.internal` resuelve al host automáticamente.
+- Si Laragon tiene password en `root`, setea `DJANGO_DB_PASSWORD`.
+
+### Docker + PostgreSQL (perfil opcional)
+
+- `docker compose --profile postgres up -d --build web db redis`
 
 Consulta:
 - `PROMPTS/00_CONTEXT.md` para filosofía y reglas.
