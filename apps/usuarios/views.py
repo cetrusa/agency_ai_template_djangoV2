@@ -8,8 +8,7 @@ from django.views.decorators.http import require_POST
 from apps.orgs.decorators import organization_required
 from apps.orgs.models import Membership
 from apps.orgs.utils import get_active_organization
-from apps.service_core.infra.context import ExecutionContext
-from apps.service_core.base.result import ServiceError
+from apps.core.services import ExecutionContext, ServiceError
 from apps.usuarios.domain.inputs import (
     CreateMemberInput,
     ExportMembersInput,

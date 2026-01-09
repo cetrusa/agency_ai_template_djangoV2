@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+
 class ServiceErrorException(Exception):
     """Base exception for service-layer errors."""
 

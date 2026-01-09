@@ -5,8 +5,7 @@ from typing import Any
 from django.db import transaction
 
 from apps.orgs.models import Membership
-from apps.service_core.base.result import ServiceError, ServiceResult
-from apps.service_core.base.service import BaseService
+from apps.core.services import BaseService, ServiceError, ServiceResult
 from apps.usuarios.domain.inputs import UpdateMemberInput
 
 

@@ -5,8 +5,7 @@ from typing import Any
 from django.db.models import Q, QuerySet
 
 from apps.orgs.models import Membership
-from apps.service_core.base.result import ServiceResult
-from apps.service_core.base.service import BaseService
+from apps.core.services import BaseService, ServiceResult
 from apps.usuarios.domain.inputs import ListMembersInput
 
 
